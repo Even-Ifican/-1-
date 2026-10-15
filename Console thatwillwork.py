@@ -151,11 +151,134 @@ def cmd_exit(args):
     window.destroy()
     return ""
 
+def get_file(path, cmd):
+    node = resolve(path)
+    if node.is_dir:
+        raise CommandError(f"{cmd}: {path}: это каталог")
+    return node
+
+
+def cmd_tail(args):
+    n = 10
+    files = []
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a == "-n":
+            if i + 1 >= len(args):
+                raise CommandError("tail: опция -n требует число")
+            try:
+                n = int(args[i + 1])
+            except ValueError:
+                raise CommandError(f"tail: неверное число строк: {args[i + 1]}")
+            if n < 0:
+                raise CommandError("tail: число строк не может быть отрицательным")
+            i += 2
+            continue
+        if a.startswith("-") and len(a) > 1:
+            raise CommandError(f"tail: неизвестная опция {a}")
+        files.append(a)
+        i += 1
+
+    if not files:
+        raise CommandError("tail: не указан файл")
+
+    out = []
+    for f in files:
+        node = get_file(f, "tail")
+        lines = node.data.decode("utf-8", errors="replace").splitlines()
+        if len(files) > 1:
+            out.append(f"==> {f} <==")
+        out.extend(lines[-n:] if n > 0 else [])
+    return "\n".join(out)
+
+
+def cmd_wc(args):
+    flags, files = set(), []
+    for a in args:
+        if a.startswith("-") and len(a) > 1:
+            for ch in a[1:]:
+                if ch not in "lwc":
+                    raise CommandError(f"wc: неизвестная опция -{ch}")
+                flags.add(ch)
+        else:
+            files.append(a)
+    if not files:
+        raise CommandError("wc: не указан файл")
+    if not flags:
+        flags = {"l", "w", "c"}
+
+    def fmt(counts, name):
+        parts = [str(c) for c, k in zip(counts, "lwc") if k in flags]
+        return " ".join(parts) + " " + name
+
+    lines, total = [], [0, 0, 0]
+    for f in files:
+        data = get_file(f, "wc").data
+        counts = (data.count(b"\n"),
+                  len(data.decode("utf-8", errors="replace").split()),
+                  len(data))
+        total = [t + c for t, c in zip(total, counts)]
+        lines.append(fmt(counts, f))
+    if len(files) > 1:
+        lines.append(fmt(total, "total"))
+    return "\n".join(lines)
+
+
+
+def check_removable(node, name, cmd):
+    if node is vfs_root:
+        raise CommandError(f"{cmd}: {name}: нельзя удалить корень")
+    n = cwd
+    while n is not None:
+        if n is node:
+            raise CommandError(
+                f"{cmd}: {name}: нельзя удалить текущий каталог или его родителя")
+        n = n.parent
+
+
+def cmd_rmdir(args):
+    if not args:
+        raise CommandError("rmdir: не указан каталог")
+    for a in args:
+        node = resolve(a)
+        if not node.is_dir:
+            raise CommandError(f"rmdir: {a}: не каталог")
+        check_removable(node, a, "rmdir")
+        if node.children:
+            raise CommandError(f"rmdir: {a}: каталог не пуст")
+        node.parent.children.pop(node.name)
+    return ""
+
+
+def cmd_rm(args):
+    recursive, targets = False, []
+    for a in args:
+        if a.startswith("-") and len(a) > 1:
+            if a in ("-r", "-R"):
+                recursive = True
+            else:
+                raise CommandError(f"rm: неизвестная опция {a}")
+        else:
+            targets.append(a)
+    if not targets:
+        raise CommandError("rm: не указан файл")
+    for t in targets:
+        node = resolve(t)
+        check_removable(node, t, "rm")
+        if node.is_dir and not recursive:
+            raise CommandError(f"rm: {t}: это каталог (используйте -r)")
+        node.parent.children.pop(node.name)
+    return ""
 
 COMMANDS = {
     "ls": cmd_ls,
     "cd": cmd_cd,
     "exit": cmd_exit,
+    "tail": cmd_tail,
+    "wc": cmd_wc,
+    "rmdir": cmd_rmdir,
+    "rm": cmd_rm,
 }
 
 
