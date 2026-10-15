@@ -1,0 +1,44 @@
+
+ls /tmp/a/b
+ls /home/user/projects/app
+
+rm /tmp/a/b/f.txt
+ls /tmp/a/b
+
+rm /etc/config.cfg data.bin
+ls /
+ls /etc
+
+rmdir /tmp/a/b
+ls /tmp/a
+
+rmdir /tmp/a /home/user/projects/app/empty
+ls /tmp
+ls /home/user/projects/app
+
+rm -r /home/user/projects
+ls /home/user
+
+tail /etc/config.cfg
+
+rmdir
+rmdir нет_такого
+rmdir /home/user/log.txt
+rmdir /home
+rmdir /
+
+rm
+rm нет_такого
+rm /home
+rm -x /home
+rm -r /
+
+cd /home/user
+rmdir /home/user
+rm -r /home
+rm -r .
+rm -r ..
+cd /
+
+rm -r /home
+ls

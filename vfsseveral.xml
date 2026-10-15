@@ -1,0 +1,8 @@
+<vfs>
+  <file name="a.txt">первый</file>
+  <file name="b.txt">второй</file>
+  <file name="data.bin" encoding="base64">SGVsbG8gV29ybGQ=</file>
+  <dir name="docs">
+    <file name="readme.md">readme</file>
+  </dir>
+</vfs>

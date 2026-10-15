@@ -1,0 +1,38 @@
+# ===== wc =====
+wc /home/user/log.txt
+wc -l /home/user/log.txt
+wc -w /home/user/log.txt
+wc -c /home/user/log.txt
+wc -lw /home/user/log.txt
+wc /home/user/log.txt /etc/config.cfg
+wc data.bin
+# ===== tail =====
+tail /home/user/log.txt
+tail -n 3 /home/user/log.txt
+tail -n 0 /home/user/log.txt
+tail -n 100 /etc/config.cfg
+tail /etc/config.cfg /home/user/projects/notes.txt
+cd /home/user
+tail -n 2 log.txt
+cd /
+# ===== ошибки wc =====
+wc
+wc нет_такого
+wc /home
+wc -x /etc/config.cfg
+# ===== ошибки tail =====
+tail
+tail нет_такого
+tail /home
+tail -n
+tail -n abc /etc/config.cfg
+tail -n -5 /etc/config.cfg
+tail -x /etc/config.cfg
+# ===== ls и cd (из прошлых этапов) =====
+ls
+ls /home/user
+cd /home/user/projects
+cd ..
+cd нет_такого
+ls -la
+foo

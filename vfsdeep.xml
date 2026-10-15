@@ -1,0 +1,38 @@
+<vfs>
+  <dir name="home">
+    <dir name="user">
+      <dir name="projects">
+        <dir name="app">
+          <file name="main.py">print(1)
+print(2)</file>
+          <dir name="empty"></dir>
+        </dir>
+        <file name="notes.txt">заметки</file>
+      </dir>
+      <file name="log.txt">line 1
+line 2
+line 3
+line 4
+line 5
+line 6
+line 7
+line 8
+line 9
+line 10
+line 11
+line 12
+</file>
+    </dir>
+  </dir>
+  <dir name="etc">
+    <file name="config.cfg">x=1</file>
+  </dir>
+  <dir name="tmp">
+    <dir name="a">
+      <dir name="b">
+        <file name="f.txt">x</file>
+      </dir>
+    </dir>
+  </dir>
+  <file name="data.bin" encoding="base64">SGVsbG8gV29ybGQ=</file>
+</vfs>
